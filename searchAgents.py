@@ -295,14 +295,18 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #List of visited nodes
+        isVisited = []
+        return (self.startingPosition, isVisited)
+        
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # All four corners visited
+        return len(state[1]) == 4
 
     def getSuccessors(self, state):
         """
@@ -314,18 +318,24 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        currentPlace, counterCorners = state[0], state[1]
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-
+            x, y = currentPlace
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
             "*** YOUR CODE HERE ***"
-
+            if not hitsWall:
+                if (nextx, nexty) in self.corners and (nextx, nexty) not in counterCorners:
+                    isVisited = counterCorners + [(nextx, nexty)]
+                    successors.append((((nextx, nexty), isVisited), action, 1))
+                else:
+                    successors.append(
+                        (((nextx, nexty), counterCorners), action, 1))
+            
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
